@@ -1,22 +1,46 @@
-import { useEffect } from "react";
-import { Text, View } from "react-native";
+import PokemonCard from "@/components/PokemonCard";
+import { useRouter } from "expo-router";
+import { useEffect, useState } from "react";
+import { Button, ScrollView, Text } from "react-native";
+
+interface Pokemon {
+  name: string;
+  url: string;
+}
 
 export default function Index() {
-  useEffect(() => {
-    console.log("Entre en pantalla");
-    getPokemons();
-  }, []);
+  const router = useRouter();
+  const [results, setResult] = useState<Pokemon[]>([]);
 
-  const getPokemons = async () => {
-    const url = "https://pokeapi.co/api/v2/pokemon?limit=100000&offset=0"
-    const response = await fetch(url); 'response'
-    const data = await response.json()
-    console.log (response);
-  }
+  useEffect(() => {
+    console.log("Entre en pantalla"); 
+    getPokemon();
+  }, []); 
+
+  const getPokemon = async () => {
+    const URL = "https://pokeapi.co/api/v2/pokemon?limit=151&offset=0"; 
+    const response = await fetch(URL); 
+    const data = await response.json(); 
+    console.log(data); 
+    setResult(data.results); 
+  };
 
   return (
-    <View>
-      <Text>Ramses</Text>
-    </View>
+    <ScrollView>
+      <Button 
+        onPress={() => router.push("../pokemon")} 
+        title="Static Page" 
+      />
+        
+      {results[250] && <Text style={{ padding: 10 }}>{results[250].name}</Text>}
+
+      {results.map((pokemon) => (
+        <PokemonCard // 
+          key={pokemon.name}
+          name={pokemon.name}
+          url={pokemon.url}
+        />
+      ))}
+    </ScrollView>
   );
 }
