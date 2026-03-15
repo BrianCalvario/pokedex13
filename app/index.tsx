@@ -1,51 +1,40 @@
-import PokemonCard from "@/components/PokemonCard";
-import { useRouter } from "expo-router";
+import { router } from "expo-router";
 import { useEffect, useState } from "react";
-import { Button, ScrollView } from "react-native";
-
-interface Pokemon {
-  name: string;
-  url: string;
-}
+import { Button, ScrollView, Text, View } from "react-native";
+import PokemonCard from "../components/PokemonCard";
 
 export default function Index() {
-
-  const router = useRouter();
-  const [results, setResult] = useState<Pokemon[]>([]);
-
+  const [results, setResults] = useState<any[]>([]);
   useEffect(() => {
-    console.log("Entre en pantalla"); 
-    getPokemon();
+    console.log("Entre en pantalla");
+    getPokemons();
   }, []);
-
-  const getPokemon = async () => {
-
-    const URL = "https://pokeapi.co/api/v2/pokemon?limit=151&offset=0";
-
-    const response = await fetch(URL); 
-    const data = await response.json(); 
-
-    console.log(data);
-
-    setResult(data.results);
+  const getPokemons = async () => {
+    const URL = "https://pokeapi.co/api/v2/pokemon?limit=100000&offset=0";
+    const response = await fetch(URL);
+    console.log(response);
+    const data = await response.json();
+    setResults(data.results);
   };
 
   return (
     <ScrollView>
-
       <Button
-        onPress={() => router.push("/pokemon")}
-        title="Static Page"
-      />
-
-      {results.map((pokemon) => (
-        <PokemonCard
-          key={pokemon.name}
-          name={pokemon.name}
-          url={pokemon.url}
-        />
-      ))}
-
+        title="Static page"
+        onPress={() => router.push("../pokemon/index")}
+      ></Button>
+      <Button
+        title="Dynamic page"
+        onPress={() => router.push("../pokemon/[name]")}
+      ></Button>
+      <View>
+        <Text>{results[250]?.name}</Text>
+        {results.map((item) => {
+          return (
+            <PokemonCard key={item.name} name={item.name} url={item.url} />
+          );
+        })}
+      </View>
     </ScrollView>
   );
 }
